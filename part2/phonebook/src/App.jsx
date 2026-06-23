@@ -76,14 +76,18 @@ const App = () => {
             // Exercise 2.16: success notification
             showNotification(`Updated ${returnedPerson.name}'s number`)
           })
-          .catch(() => {
-            // Exercise 2.17: agar person pehle se delete ho chuka ho (404)
-            showNotification(
-              `Information of ${existingPerson.name} has already been removed from server`,
-              'error'
-            )
-            // State se bhi hata do - ab exist nahi karta
-            setPersons(persons.filter(p => p.id !== existingPerson.id))
+          .catch(error => {
+            if (error.response && error.response.data && error.response.data.error) {
+              showNotification(error.response.data.error, 'error')
+            } else {
+              // Exercise 2.17: agar person pehle se delete ho chuka ho (404)
+              showNotification(
+                `Information of ${existingPerson.name} has already been removed from server`,
+                'error'
+              )
+              // State se bhi hata do - ab exist nahi karta
+              setPersons(persons.filter(p => p.id !== existingPerson.id))
+            }
           })
       }
       return
@@ -100,6 +104,9 @@ const App = () => {
         setNewNumber('')
         // Exercise 2.16: success notification
         showNotification(`Added ${returnedPerson.name}`)
+      })
+      .catch(error => {
+        showNotification(error.response.data.error, 'error')
       })
   }
 
